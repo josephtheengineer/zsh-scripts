@@ -1,5 +1,4 @@
 export GPG_TTY=$(tty)
-/etc/zsh/pinentry-update.sh
 gpgconf –kill gpg-agent
 pkill pinentry
 pkill gpg-agent
