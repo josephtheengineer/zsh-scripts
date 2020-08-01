@@ -17,7 +17,7 @@ export XDG_CACHE_HOME="${LOCAL_CACHE}"
 export XDG_CONFIG_HOME="${LOCAL_ETC}"
 export XDG_DATA_HOME="${LOCAL_LIB}"
 export XDG_STATE_HOME="${LOCAL_LOG}"
-export XDG_RUNTIME_DIR="${LOCAL_CACHE}/run"
+#export XDG_RUNTIME_DIR="${LOCAL_CACHE}/run" # breaks mpv
 export XDG_LIB_HOME="${LOCAL_LIB}"
 export XDG_LOG_HOME="${LOCAL_LOG}"
 
@@ -50,8 +50,8 @@ export ZDOTDIR="${LOCAL_ETC}/zsh"
 export LESSHISTFILE="${LOCAL_LIB}/less/history"
 export NETHACKOPTIONS="${LOCAL_ETC}/nethack/nethackrc"
 export PYTHONSTARTUP="${LOCAL_LIB}/python/startup.py"
-export PULSE_SOURCE="${LOCAL_ETC}/pulse/client.conf"
-export PULSE_COOKIE="${LOCAL_CACHE}/pulse/cookie"
+#export PULSE_SOURCE="${LOCAL_ETC}/pulse/client.conf"
+#export PULSE_COOKIE="${LOCAL_CACHE}/pulse/cookie"
 
 
 # Other session-wide variables

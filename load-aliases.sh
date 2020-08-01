@@ -125,14 +125,14 @@ do
 done
 
 # projects workspace
-for file in ~/workspace/*
-do
-	filename=$(basename $file)
-	alias $filename="source ~/.config/scripts/open-project.sh $filename"
-done
+#for file in ~/workspace/*
+#do
+#	filename=$(basename $file)
+#	alias $filename="source ~/.config/scripts/open-project.sh $filename"
+#done
 
 # projects workspace
-for file in $PLAN9/bin/*
-do
-	alias $file="$PLAN9/bin/$filename"
-done
+#for file in $PLAN9/bin/*
+#do
+#	alias $file="$PLAN9/bin/$filename"
+#done

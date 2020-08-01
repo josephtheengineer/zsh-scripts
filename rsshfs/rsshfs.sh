@@ -19,6 +19,8 @@ then
     exit 1;
 fi
 
+SFTP_SERVER=$(find /nix/store -name sftp-server | head -1)
+
 lpath="$1"
 IFS=: read rhost rpath <<< "$2"
 qrpath="$(quote "$rpath")"
@@ -53,7 +55,7 @@ else
     fifo=/tmp/rsshfs-$$
     rm -f "$fifo"
     mkfifo -m600 "$fifo" &&
-    < "$fifo" sftp-server "${sftpargs[@]}" |
+    < "$fifo" $SFTP_SERVER "${sftpargs[@]}" |
       ssh "$rhost" sshfs -o slave ":$qlpath" "$qrpath" "$qall" > "$fifo"
     rm "$fifo"
 fi

@@ -1,7 +1,5 @@
 function main {
 	source /etc/zsh/use-key.sh
-	/etc/zsh/rsshfs/rsshfs.sh -u ssh.theengineer.life:/home/josephtheengineer/var/cache/remote-git
-	/etc/zsh/rsshfs/rsshfs.sh $PWD ssh.theengineer.life:/home/josephtheengineer/var/cache/remote-git &
 
 	ssh -t ssh.theengineer.life "
 	source ~/etc/zsh/.zshrc
@@ -9,12 +7,10 @@ function main {
 	export GPG_TTY=\$(tty);
 	export SSH_AUTH_SOCK=\$(gpgconf --list-dirs agent-ssh-socket);
 	gpg-connect-agent updatestartuptty /bye > /dev/null;
-	cd ~/var/cache/remote-git;
 	echo '------------------------------------';
-	git $@;
+	pass $@;
 	echo '------------------------------------'"
 
-	/etc/zsh/rsshfs/rsshfs.sh -u ssh.theengineer.life:/home/josephtheengineer/var/cache/remote-git
 	/etc/zsh/close-key.sh 0
 }
 

@@ -1,4 +1,4 @@
-exit
+exit # Prevent user from acidentaly formating their os
 
 echo "Unmounting devices..."
 swapoff /mnt/swapfile

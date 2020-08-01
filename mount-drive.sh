@@ -1,23 +1,29 @@
+init="	source ~/etc/zsh/.zshrc;
+	/etc/zsh/fix-gpg.sh > /dev/null;
+	export GPG_TTY=\$(tty);
+	export SSH_AUTH_SOCK=\$(gpgconf --list-dirs agent-ssh-socket);
+	gpg-connect-agent updatestartuptty /bye > /dev/null"
+
 function main {
 	encrypted=false
-	key=""
-	drive=""
+	store=false
+	drive=()
 	path=""
 
-	check $@
+	check "$@"
 
-	mount "$drive" "$path" "$encrypted" "$key"
+	mount "$drive" "$path" "$encrypted" "$store"
 
 	exit 1
 }
 
 function check {
 	local OPTIND opt
-	while getopts ":ek:d:p:" opt; do
+	while getopts ":esd:p:" opt; do
 		case $opt in
 			e) encrypted=true;;
-			k) key="$OPTARG";;
-			d) drive="$OPTARG";;
+			s) store=true;;
+			d) drive+=("$OPTARG");;
 			p) path="$OPTARG";;
 			\?h) help;exit 1;;
 		esac
@@ -26,6 +32,7 @@ function check {
 }
 
 function mount {
+	echo "Mounting $(basename $2)..."
 	drive=""
 	if [ -z "$1" ]; then
 
@@ -64,15 +71,30 @@ function mount {
 		[[ "$mkdiryn" = y ]] && sudo mkdir -p "$mountpoint"
 	fi
 	if [[ $3 = true ]]; then
-		if [ -n "$4" ]; then
-			printf "$4" | sudo cryptsetup open --type luks $drive $(basename $mountpoint) #${drive#"/dev/"}
-		else
-			sudo cryptsetup open --type luks $drive $(basename $mountpoint) #${drive#"/dev/"}
-		fi
-		sudo mount /dev/mapper/$(basename $mountpoint) $mountpoint && echo "$drive mounted to $mountpoint."
+		counter=0
+		drive_name=""
+		for single_drive in "${drive[@]}"; do
+			counter=$((counter + 1))
+			if [ ${#drive[@]} -eq 1 ]; then
+				drive_name=$(basename $mountpoint)
+			else
+				drive_name="$(basename $mountpoint)-$counter"
+			fi
+
+			if [[ $4 = true ]]; then
+				echo "Fetching password for $drive_name..."
+				pass="$(ssh -tq ssh.theengineer.life "eval $init; pass drive/$drive_name" | tee /dev/tty | tail -n1)"
+				pass="${pass: -26}"
+				pass="${pass%?}"
+				echo "$pass" | sudo cryptsetup open --type luks $single_drive $drive_name #${single_drive#"/dev/"}
+			else
+				sudo cryptsetup open --type luks $single_drive $drive_name #${single_drive#"/dev/"}
+			fi
+		done
+		sudo mount /dev/mapper/$drive_name $mountpoint && echo "${drive[@]} mounted to $mountpoint."
 	else
 		sudo mount $drive $mountpoint && echo "$drive mounted to $mountpoint."
 	fi
 }
 
-main $@
+main "$@"
